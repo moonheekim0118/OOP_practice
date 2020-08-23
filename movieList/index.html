@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인생영화저장소</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
+  />
+</head>
+<body>
+    <div class="page__title">
+        <h1>인생영화 저장소</h1>
+    </div>
+    <div class="form__container" id="form__container">
+        <div class="alert__container" id="alert__container">
+        </div>
+        <form class="form" id="form" >
+            <div class="form__control"> <!--제목-->
+                <label for="title">제목</label>
+                <input type="text"id="title" placeholder="제목을 입력하세요">
+            </div>
+            <div class="form__control"> <!--감독-->
+                <label for="director">감독</label>
+                <input type="text" id="director" placeholder="감독 이름을 입력하세요">
+            </div>
+            <div class="form__control"><!--제작년도-->
+                <label for="year">제작년도</label>
+                <input type="number" id="year" placeholder="제작년도를 입력하세요">
+                
+            </div>
+            <div class="form__control"> <!--한줄평-->
+                <label for="comment">한줄평</label>
+                <input type="text" id="comment" placeholder="한줄평을 입력하세요">
+            </div>
+            <div class="form__control">
+                <button type="submit">등록</button>
+            </div>
+        </form>
+    </div>
+    <table class="movie__container" id="movie__container">
+        <tr class="index">
+            <th>제목</th>
+            <th>감독</th>
+            <th>제작년도</th>
+            <th>한줄평</th>
+        </tr>
+    </table>
+    <div class="modal__container" id="modal__container">
+        <div class="modal">
+            <i class="fas fa-times" id="close"></i>
+             <div class="movie__info">
+                <div class="movie__title" id="movie__title">인셉션</div>
+                <div class="movie__year" id="movie__year">2010</div>
+             </div>
+            <div class="movie__director" id="movie__director">크리스토퍼 놀란</div>
+            <div class="movie__comment" id="movie__comment">인셉션에서 꿈은 재귀 함수</div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
