@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"/>
+    <title>My blog</title>
+</head>
+<body>
+    <h1>Blog👽</h1>
+    <div class="filter__container">
+        <input type="text" id="filter" class="filter" placeholder="검색어를 입력하세요">
+    </div>
+    <div class="alert__container" id="alert__container">
+        
+    </div>
+    <div id="post__container" class="post__container">
+    </div>
+    <div class="modal__container" id="modal__container">
+        <div class="modal">
+            <i class="fas fa-times" id="close__btn"></i>
+            <form class="update__form" id="update__form">
+                <input type="text" class="updated__title" id="updated__title" value="">
+                <input type="text" class="updated__contents" id="updated__contents" value="">
+                <input type="hidden" class="post__id" id="post__id">
+                <button type="submit" id="updateBtn">update</button>
+            </form>
+        </div>
+    </div>
+    <div class="loader">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
