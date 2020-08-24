@@ -9,6 +9,7 @@ window.onload=function(){
     const $postId=document.getElementById('post__id');
     const $filter= document.getElementById('filter');
     const $closeBtn= document.getElementById('close__btn');
+    let $editBtns =document.querySelectorAll('.edit');
     const limit = 5;
     let page=1;
 
@@ -69,7 +70,7 @@ window.onload=function(){
             `
         $posts.appendChild(newPost);
         })
-        editEventListeners(document.querySelectorAll('.edit')); // edit 버튼 추가되었으므로 갱신하여 이벤트리스너 등록 
+
     }
 
     // post 내용 변경해주기 
@@ -115,7 +116,8 @@ window.onload=function(){
                 } 
             }
         })
-        editEventListeners( document.querySelectorAll('.edit'));
+        $editBtns =document.querySelectorAll('.edit');//edit 버튼 추가되었으므로 갱신하여 이벤트리스너 등록 
+        editEventListeners();
     }
 
     // modal 띄우기 
@@ -150,10 +152,11 @@ window.onload=function(){
    async function getPosts(){
         const posts = await api__.get();
         UI__.drawPost(posts);
-        $editBtns = document.querySelectorAll('.edit');
+        $editBtns =document.querySelectorAll('.edit');//edit 버튼 추가되었으므로 갱신하여 이벤트리스너 등록 
+        editEventListeners();
     }
 
-    function editEventListeners($editBtns){
+    function editEventListeners(){
         if($editBtns.length > 0){
             $editBtns.forEach(btn=>{
                 btn.addEventListener('click',UI__.showModal);
@@ -194,5 +197,5 @@ window.onload=function(){
 
     $closeBtn.addEventListener('click',UI__.closeModal);
 
-
+console.log($editBtns);
 }
