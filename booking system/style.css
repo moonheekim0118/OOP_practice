@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Song+Myung&display=swap');
+*{
+    box-sizing: border-box;
+}
+
+body{
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin:0;
+    width:100%;
+    min-height: 100vh;
+    font-family: 'Song Myung', serif;
+}
+
+
+.title__container{
+    font-size:2.5rem;
+    text-align: center;
+}
+
+.main__container{
+    display: flex;
+    justify-content: space-evenly;
+    height:50%;
+}
+
+.selected__list{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border:1px solid black;
+    border-radius: 5px;
+    padding-right:20px;
+    width:300px;
+    max-height:40%;
+    margin:10px;
+}
+
+.selected__list.hidden{
+    display: none;
+}
+
+.selected__list .selected__movies{
+    list-style-type: none;
+    max-height: 60%;
+    overflow-y: scroll;
+    position: relative;
+    
+}
+
+.single__movie{
+    display: flex;
+    justify-content: space-between;
+}
+
+.single__movie #remove{
+    margin-right:10px;
+}
+
+.single__movie .movie__info{
+    margin-bottom: 10px;
+}
+
+
+.single__movie #remove:hover{
+    cursor: pointer;
+    color:red;
+}
+
+.selected__list .reserve{
+    cursor: pointer;
+    position: absolute;
+    bottom:5px;
+    border:none;
+    border-radius: 5px;
+    font-size: 15px;
+    font-family: 'Song Myung', serif;
+    padding: 5px 15px;
+}
+
+.selected__list .reserve:hover{
+    background-color: royalblue;
+    color:#fff;
+}
+
+.screening__list{
+    display: block;
+    margin:10px;
+    border-radius: 5px;
+    height:30vh;
+    overflow-y: scroll;
+    text-align: center;
+    padding:30px;
+}
+
+.screening__list.hidden{
+    display: none;
+}
+
+.calendar__container{
+    margin:20px;
+    font-size:18px;
+}
+
+.calendar__container .month{
+    font-size:21px;
+}
+
+
+.reservation__container{
+    width:50vw;
+    max-height:10vh;
+    display: block;
+}
+
+.reservation__container.hidden{
+    display: none;
+}
+
+.screening__date{
+    color:#ff6666;
+}
+
+.day__week{
+    text-align: center;
+    cursor: pointer;
+}
+
+.day__week.today{
+    color:#008080;
+}
+
+.day__week:hover {
+    background-color: #e0e0d1;
+}
+
+
+
+@media (max-width:631px){
+    .main__container{
+        flex-direction: column-reverse;
+    }
+}
