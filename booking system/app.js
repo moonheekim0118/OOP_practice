@@ -14,6 +14,45 @@ const screeningList=
     [],
     []
 ]
+
+function timestamp(startTime, endTime)
+{
+   
+   const start= startTime.split('.');
+   let startHour = start[0];
+   let startMin = start[1];
+   if(startMin ===undefined){
+       startMin=0;
+   }
+   if(startMin===6){
+       startMin=0;
+       starTHour++;
+   }
+   if(startHour.length===1){
+       startHour= `0${startHour}`
+   }
+   if(startMin>=0 && startMin<10){
+       startMin=`${startMin}0`
+   }
+   const end=endTime.split('.');
+   let endHour = end[0];
+   let endMin= end[1];
+   if(endMin === undefined){
+       endMin=0;
+   }
+   if(endMin===6){
+       endMin=0;
+       endHour++;
+   }
+   if(endHour.length===1){
+       endHour=`0${endHour}`;
+   }
+   if(endMin>=0 && endMin <10){
+       endMin=`${endMin}0`;
+   }
+
+   return `${startHour}:${startMin} ~ ${endHour}:${endMin}`;
+}
 class Movie {
     constructor(title, sequence, fee){
         this.title=title;
@@ -83,9 +122,8 @@ class Screening{
         if(end >=24){
             end-=24;
         }
-        start.toString().replace('.',':');
-        end.toString().replace('.',':');
-        return `${start}~${end}`;
+        end=end.toFixed(1);
+        return timestamp(start.toString(),end.toString());
     }
     
     getMovieTitle(){
@@ -310,7 +348,7 @@ const initScreening=function(){
     const movie5 = new Movie('센과 치히로의 행방불명', '2', '8000');
     const movie6 = new Movie('가디언즈 오브 갤럭시', '3', '10000');
     const movie7 = new Movie('어느 가족', '2', '11000');
-
+    const movieList=[movie1,movie2,movie3,movie4,movie5,movie6,movie7];
     const today_date=date.getDate();
     const DaysInMonth= date.getDaysInMonth();
     for(i=0;i<7;i++){ 
@@ -320,24 +358,24 @@ const initScreening=function(){
         }
         let obj=new Screening(newDate,movie1,7,policy1);
         screeningList[i].push(obj);
-        screeningList[i].push(new Screening(newDate,movie2,8,policy3));
-        screeningList[i].push(new Screening(newDate,movie4,7.30,policy1));
-        screeningList[i].push(new Screening(newDate,movie5,6,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],8,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],6,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],7.30,policy1));
 
-        screeningList[i].push(new Screening(newDate,movie6,12,policy1));
-        screeningList[i].push(new Screening(newDate,movie1,12,policy1));
-        screeningList[i].push(new Screening(newDate,movie3,13,policy1));
-        screeningList[i].push(new Screening(newDate,movie5,15,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],12,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],12,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],13,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],15,policy3));
 
-        screeningList[i].push(new Screening(newDate,movie1,17,policy1));
-        screeningList[i].push(new Screening(newDate,movie5,18,policy1));
-        screeningList[i].push(new Screening(newDate,movie3,21,policy1));
-        screeningList[i].push(new Screening(newDate,movie2,20,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],17,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],18,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],20,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],21,policy1));
 
-        screeningList[i].push(new Screening(newDate,movie7,22,policy1));
-        screeningList[i].push(new Screening(newDate,movie7,23,policy1));
-        screeningList[i].push(new Screening(newDate,movie2,21.30,policy1));
-        screeningList[i].push(new Screening(newDate,movie6,24,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],21.35,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],22,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],23,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],24,policy3));
     }
 
 }
