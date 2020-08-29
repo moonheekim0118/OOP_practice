@@ -1,9 +1,16 @@
 
 const $selectedContainer= document.getElementById('selected__list');
-const $reservationContainer=document.getElementById('reservation__container');
+const $selectedInnerContainer=document.getElementById('selected__movies');
 const $screenContainer = document.getElementById('screening');
 const $date = document.querySelectorAll('.day__week');
 const $screenTitle=document.getElementById('screening__date');
+const $originFee=document.getElementById('origin__fee');
+const $discountFee=document.getElementById('discount__fee');
+const $totalFee=document.getElementById('total__fee');
+let $screenMovie;
+let $removeBtns;
+
+let reservedList=[];
 const screeningList=
 [
     [],
@@ -24,9 +31,9 @@ function timestamp(startTime, endTime)
    if(startMin ===undefined){
        startMin=0;
    }
-   if(startMin===6){
-       startMin=0;
-       starTHour++;
+   if(startMin>=6){
+       startMin=startMin-6;
+       startHour++;
    }
    if(startHour.length===1){
        startHour= `0${startHour}`
@@ -40,8 +47,8 @@ function timestamp(startTime, endTime)
    if(endMin === undefined){
        endMin=0;
    }
-   if(endMin===6){
-       endMin=0;
+   if(endMin>=6){
+       endMin=endMin-6;
        endHour++;
    }
    if(endHour.length===1){
@@ -161,6 +168,14 @@ class Reservation{
     getMoney(){
         return this.money;
     }
+
+    getTitle(){
+        return this.screening.getMovieTitle();
+    }
+
+    getTime(){
+        return this.screening.getTime();
+    }
 }
 
 class DiscountPolicy{ // 할인 정책 
@@ -212,35 +227,6 @@ class DiscountRequirement{ // 특정 상영시간 내의 영화만 할인
     
 }
 
-// 저장될 것
-// 선택된 영화 리스트
-// 예약한 영화 리스트 
-// 상영 영화 리스트 
-class Store{ // local Storage에 저장하는 클래스 
-
-    getSelectedList(){
-        return JSON.parse(localStorage.getItem('selectedList'))||[];
-    }
-
-    getReservedList(){
-        return JSON.parse(localStorage.getItem('reservedList'))||[];
-    }
-
-
-    setSelectedList(newItem){
-        const selectedList=this.getSelectedList();
-        selectedList.push(newItem);
-        localStorage.setItem('selectedList',JSON.stringify(selectedList));
-    }
-
-    setReservedList(newItem){
-        const reservedList = this.getReservedList();
-        reservedList.push(newItem);
-        localStorage.setItem('reservedList',JSON.stringify(reservedList));
-    }
-
-}
-
 class CalcDate{
     constructor(){
         const today= new Date();
@@ -269,20 +255,10 @@ class CalcDate{
 
 const date = new CalcDate();
 
-const store = new Store();
-
 class UI{
 
     initSelectedContainer(){
-        if(store.getSelectedList().length===0){
-            $selectedContainer.classList.add('hidden');
-        }
-    }
-
-    initReservedContainer(){
-        if(store.getReservedList().length===0){
-            $reservationContainer.classList.add('hidden');
-        }
+        $selectedContainer.classList.add('hidden');
     }
 
     showMovies(selectedDate){ // 특정 날짜 선택시, 해당 날짜에 상영하는 영화 나열 
@@ -307,20 +283,97 @@ class UI{
             <th>가격</th>
         </tr>
         `
-       screenList.forEach(movie=>{
-           console.log(movie);
+       screenList.forEach((movie,index)=>{
            const money= movie.CalcMoney();
            const totalFee = money.getTotal()-money.getDiscount();
            html+=`
-           <tr>
+           <tr class="screening__movies">
                 <td>${movie.getTime()}</td>
                 <td>${movie.getMovieTitle()}</td>
                 <td>${totalFee}</td>
-
+                <td class="hidden">${idx},${index},${selectedDate}</td>
            </tr>
            `;
        })
        $screenContainer.innerHTML=html;
+       $screenMovie=document.querySelectorAll('.screening__movies');
+       movieSelectEvent();
+    }
+
+    fetchReservationContainer(){
+        let html='';
+        reservedList.forEach(list=>{
+            html+=`
+                <div class="single__movie">
+                <i class="fas fa-times" id="remove"></i>
+                <li class="movie__info">${list.date}일,${list.reservation.getTitle()}${list.reservation.getTime()} ${list.qty}장</li>
+                <div class="hidden">${reservedList.indexOf(list)}</div>
+                </div>
+                `;
+        })    
+        $selectedInnerContainer.innerHTML=html;
+    }
+
+    updateFee(){ // 가격 업데이트
+        // reduce!
+        // money.getTotal()
+        // money.getDiscount()
+        const origin=reservedList.reduce((accum,val)=>accum+ (+val.originMoney)*(+val.qty),0);
+        console.log(origin);
+        const discount=reservedList.reduce((accum,val)=>accum+ (+val.discountMoney)*(+val.qty),0);
+        const total = origin-discount;
+        $originFee.innerText=`원가: ${origin}원`;
+        $discountFee.innerText=`할인액: ${discount}원`;
+        $totalFee.innerText=`총액: ${total}원`;
+    }
+
+    addReservation(reservation,date){
+        if($selectedContainer.classList.contains('hidden')){
+            $selectedContainer.classList.remove('hidden');
+        }
+        const newItem=
+        {
+            reservation:reservation,
+            date:date,
+            qty:1,
+            originMoney:reservation.getMoney().getTotal(),
+            discountMoney:reservation.getMoney().getDiscount()
+        }
+        let flag=false;
+        if(reservedList.length>0){
+            reservedList.forEach(list=>{
+                if(JSON.stringify(list.reservation)===JSON.stringify(reservation) && list.date===date){
+                    list.qty++;
+                    flag=true;
+                }
+            })
+        }
+        if(flag===true){
+            this.fetchReservationContainer();
+        }
+        else{
+            reservedList.push(newItem);
+            let html;
+            html=`
+            <div class="single__movie">
+            <i class="fas fa-times" id="remove"></i>
+            <li class="movie__info">${date}일,${reservation.getTitle()}${reservation.getTime()} 1장</li>
+            <div class="hidden">${reservedList.indexOf(newItem)}</div>
+            </div>
+            `
+            $selectedInnerContainer.innerHTML+=html;
+        }
+        $removeBtns=document.querySelectorAll('#remove');
+        reservationRemoveEvent();
+    }
+
+    removeReservation(){
+        // 삭제되었으니, 새로 fetch 해줘야함
+        this.fetchReservationContainer();
+        this.updateFee();
+        if(reservedList.length ===0){
+            this.initSelectedContainer();
+        }
     }
 }
 
@@ -351,31 +404,30 @@ const initScreening=function(){
     const movieList=[movie1,movie2,movie3,movie4,movie5,movie6,movie7];
     const today_date=date.getDate();
     const DaysInMonth= date.getDaysInMonth();
+    const arrLen=movieList.length;
     for(i=0;i<7;i++){ 
         let newDate=today_date+i;
         if(newDate>=DaysInMonth){
             newDate-=DaysInMonth;
         }
-        let obj=new Screening(newDate,movie1,7,policy1);
-        screeningList[i].push(obj);
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],8,policy3));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],6,policy3));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],7.30,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],6,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],7.30,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],8,policy3));
 
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],12,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],12,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],13,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],15,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],12,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],12,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],13,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],15,policy3));
 
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],17,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],18,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],20,policy3));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],21,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],17,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],18,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],20,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],21,policy1));
 
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],21.35,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],22,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],23,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * 7) ],24,policy3));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],21.35,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],22,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],23,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],24,policy3));
     }
 
 }
@@ -384,7 +436,6 @@ const initScreening=function(){
 const ui = new UI();
 const init=function(){
     ui.initSelectedContainer();
-    ui.initReservedContainer();
 }
 const dateEvent=function(){
     $date.forEach(date=>{
@@ -395,6 +446,33 @@ const dateEvent=function(){
             const selectedMonth=date.children[0].innerText;
             $screenTitle.innerText=`${selectedMonth} ${selectedDate}`;
             ui.showMovies(+selectedDate.replace('일',''));
+        })
+    })
+}
+
+function movieSelectEvent(){
+    $screenMovie.forEach(movie=>{
+        movie.addEventListener('click',()=>{
+            const index = movie.children[3].innerText.split(','); // hidden으로 숨겨온 인덱스 가져와서 인스턴스에 접근하기
+            const firstIndex = +index[0];
+            const secondIndex= +index[1];
+            const date =+index[2];
+            const screening=screeningList[firstIndex][secondIndex];
+            const reservation = new Reservation(screening,screening.CalcMoney());
+            ui.addReservation(reservation,date);
+            ui.updateFee();
+        })
+    })
+}
+
+function reservationRemoveEvent(){
+    $removeBtns.forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            const target = +btn.parentNode.children[2].innerText; 
+            // hidden 값으로 넘겨받은 해당 객체 index 
+            reservedList=reservedList.filter((val,i)=>i!==target);
+            console.log(reservedList);
+            ui.removeReservation();
         })
     })
 }

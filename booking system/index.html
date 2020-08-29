@@ -17,34 +17,14 @@
     <div class="main__container">
         <div class="selected__list" id ="selected__list">
             <span>선택된 영화</span>
-            <ul class="selected__movies">
-                <!-- <div class="single__movie">
-                    <i class="fas fa-times" id="remove"></i>
-                    <li class="movie__info">인셉션(07:00~10:00) 8/18</li>
-                </div>
-                <div class="single__movie">
-                    <i class="fas fa-times" id="remove"></i>
-                    <li class="movie__info">인셉션(07:00~10:00) 8/18</li>
-                </div>
-                <div class="single__movie">
-                    <i class="fas fa-times" id="remove"></i>
-                    <li class="movie__info">인셉션(07:00~10:00) 8/18</li>
-                </div>
-                <div class="single__movie">
-                    <i class="fas fa-times" id="remove"></i>
-                    <li class="movie__info">인셉션(07:00~10:00) 8/18</li>
-                </div>
-                <div class="single__movie">
-                    <i class="fas fa-times" id="remove"></i>
-                    <li class="movie__info">인셉션(07:00~10:00) 8/18</li>
-                </div>
-                <div class="single__movie">
-                    <i class="fas fa-times" id="remove"></i>
-                    <li class="movie__info">인셉션(07:00~10:00) 8/18</li>
-                </div> -->
-                
+            <ul class="selected__movies" id="selected__movies">
+            
             </ul>
-            <button class="reserve">예매하기</button>
+            <div class="selected__fee">
+                <div class="origin__fee" id="origin__fee"></div>
+                <div class="discount__fee" id="discount__fee"></div>
+                <div class="total__fee" id="total__fee"></div>
+            </div>
         </div>
         <div class="calendar__container">
             <p class="screening__date" id="screening__date">날짜를 고르세요</p>
@@ -58,9 +38,6 @@
 
             </table>
         </div>
-    </div>
-    <div class="reservation__container" id="reservation__container">
-        허허
     </div>
     <script src="calendar.js"></script>
     <script src="app.js"></script>
