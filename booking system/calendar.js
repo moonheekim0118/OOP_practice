@@ -7,7 +7,6 @@ const getWeek= function(params){
     const month=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월', '11월', '12월'];
     const day = ['월','화','수','목','금','토','일'];
     const daysInMonth=getDaysInMonth(params.month, params.year);
-    console.log(daysInMonth);
     function getDaysInMonth(month,year){ // 현재 month의 총 일자 구하기 
         return new Date(year, month+1,0).getDate();
     }

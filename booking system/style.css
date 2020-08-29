@@ -171,6 +171,26 @@ body{
     background-color: #e0e0d1;
 }
 
+.alert__container{
+    position: fixed;
+    bottom:0;
+    padding:20px;
+    font-size:1.5rem;
+    background-color: darkseagreen;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    text-align: center;
+    transform:translateY(100%);
+    -webkit-transition: 1s ease-in-out;
+    transition: 1s ease-in-out;
+}
+
+.alert__container.show{
+    transform:translateY(0%);
+    -webkit-transition: 1s ease-in-out;
+    transition: 1s ease-in-out;
+}
+
 
 
 @media (max-width:631px){

@@ -7,6 +7,7 @@ const $screenTitle=document.getElementById('screening__date');
 const $originFee=document.getElementById('origin__fee');
 const $discountFee=document.getElementById('discount__fee');
 const $totalFee=document.getElementById('total__fee');
+const $alertContainer=document.getElementById('alert__container');
 let $screenMovie;
 let $removeBtns;
 
@@ -251,19 +252,9 @@ class CalcDate{
         return new Date(parseInt(this.year), parseInt(this.month)+1,0).getDate();
     }
 
-}
-
-const date = new CalcDate();
-
-class UI{
-
-    initSelectedContainer(){
-        $selectedContainer.classList.add('hidden');
-    }
-
-    showMovies(selectedDate){ // 특정 날짜 선택시, 해당 날짜에 상영하는 영화 나열 
-        const daysInMonth = +date.getDaysInMonth(); 
-        const today = +date.getDate();
+    getSpecificDate(selectedDate){
+        const daysInMonth = +this.getDaysInMonth(); 
+        const today = +this.getDate();
         let idx;
         for(let i = 0; i<7; i++){
             let newDate= today+i;
@@ -275,6 +266,53 @@ class UI{
                 break;
             }
         }
+        return idx;
+    }
+
+}
+
+const date = new CalcDate();
+
+class Store{
+    
+    filter(index){
+        reservedList=reservedList.filter((val,i)=>i!==index);
+    }
+
+    AddnewItem(newItem){
+        let flag=false;
+        reservedList.forEach(list=>{
+            if(JSON.stringify(list.reservation)===JSON.stringify(newItem.reservation) && list.date===newItem.date){
+                list.qty++;
+                flag=true;
+            }
+        })
+        if(flag===false){
+            reservedList.push(newItem);
+        }
+        return flag;
+    }
+
+    getOriginFeeReduce(){
+        return reservedList.reduce((accum,val)=>accum+ (+val.originMoney)*(+val.qty),0);
+    }
+
+    getDiscountFeeReduce(){
+        return reservedList.reduce((accum,val)=>accum+ (+val.discountMoney)*(+val.qty),0);
+    }
+    
+}
+
+const store = new Store();
+
+class UI{
+
+    initSelectedContainer(){
+        $selectedContainer.classList.add('hidden');
+    }
+
+    showMovies(selectedDate){ // 특정 날짜 선택시, 해당 날짜에 상영하는 영화 나열 
+       let idx= date.getSpecificDate(selectedDate);
        const screenList= screeningList[idx];  // 해당 날짜에 상영하는 영화 리스트
        let html =`
        <tr>
@@ -315,49 +353,28 @@ class UI{
     }
 
     updateFee(){ // 가격 업데이트
-        // reduce!
-        // money.getTotal()
-        // money.getDiscount()
-        const origin=reservedList.reduce((accum,val)=>accum+ (+val.originMoney)*(+val.qty),0);
-        console.log(origin);
-        const discount=reservedList.reduce((accum,val)=>accum+ (+val.discountMoney)*(+val.qty),0);
+
+        const origin=store.getOriginFeeReduce();
+        const discount=store.getDiscountFeeReduce();
         const total = origin-discount;
         $originFee.innerText=`원가: ${origin}원`;
         $discountFee.innerText=`할인액: ${discount}원`;
         $totalFee.innerText=`총액: ${total}원`;
     }
 
-    addReservation(reservation,date){
+    addReservation(newItem){
         if($selectedContainer.classList.contains('hidden')){
             $selectedContainer.classList.remove('hidden');
         }
-        const newItem=
-        {
-            reservation:reservation,
-            date:date,
-            qty:1,
-            originMoney:reservation.getMoney().getTotal(),
-            discountMoney:reservation.getMoney().getDiscount()
-        }
-        let flag=false;
-        if(reservedList.length>0){
-            reservedList.forEach(list=>{
-                if(JSON.stringify(list.reservation)===JSON.stringify(reservation) && list.date===date){
-                    list.qty++;
-                    flag=true;
-                }
-            })
-        }
+        const flag=store.AddnewItem(newItem);
         if(flag===true){
             this.fetchReservationContainer();
         }
         else{
-            reservedList.push(newItem);
-            let html;
-            html=`
+            let html=`
             <div class="single__movie">
             <i class="fas fa-times" id="remove"></i>
-            <li class="movie__info">${date}일,${reservation.getTitle()}${reservation.getTime()} 1장</li>
+            <li class="movie__info">${newItem.date}일,${newItem.reservation.getTitle()}${newItem.reservation.getTime()} 1장</li>
             <div class="hidden">${reservedList.indexOf(newItem)}</div>
             </div>
             `
@@ -374,6 +391,16 @@ class UI{
         if(reservedList.length ===0){
             this.initSelectedContainer();
         }
+        $removeBtns=document.querySelectorAll('#remove');
+        reservationRemoveEvent();
+    }
+
+    showAlert(message){
+        $alertContainer.classList.add('show');
+        $alertContainer.innerText=`${message}`;
+        setTimeout(()=>{
+            $alertContainer.classList.remove('show');
+        },3000);
     }
 }
 
@@ -459,8 +486,17 @@ function movieSelectEvent(){
             const date =+index[2];
             const screening=screeningList[firstIndex][secondIndex];
             const reservation = new Reservation(screening,screening.CalcMoney());
-            ui.addReservation(reservation,date);
+            const newItem=
+            {
+                reservation:reservation,
+                date:date,
+                qty:1,
+                originMoney:+reservation.getMoney().getTotal(),
+                discountMoney:+reservation.getMoney().getDiscount()
+            }
+            ui.addReservation(newItem);
             ui.updateFee();
+            ui.showAlert('예매가 완료되었습니다.');
         })
     })
 }
@@ -470,9 +506,9 @@ function reservationRemoveEvent(){
         btn.addEventListener('click',()=>{
             const target = +btn.parentNode.children[2].innerText; 
             // hidden 값으로 넘겨받은 해당 객체 index 
-            reservedList=reservedList.filter((val,i)=>i!==target);
-            console.log(reservedList);
+            store.filter(target);
             ui.removeReservation();
+            ui.showAlert('예매가 취소되었습니다.');
         })
     })
 }
