@@ -402,6 +402,15 @@ class UI{
             $alertContainer.classList.remove('show');
         },3000);
     }
+
+    changeBtnColor(btn){
+        $date.forEach(value=>{
+            if(value.classList.contains('show')){
+               value.classList.remove('show');
+            }
+        })
+        btn.classList.add('show');
+    }
 }
 
 
@@ -473,6 +482,7 @@ const dateEvent=function(){
             const selectedMonth=date.children[0].innerText;
             $screenTitle.innerText=`${selectedMonth} ${selectedDate}`;
             ui.showMovies(+selectedDate.replace('일',''));
+            ui.changeBtnColor(date);
         })
     })
 }

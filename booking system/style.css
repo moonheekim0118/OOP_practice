@@ -2,9 +2,14 @@
 *{
     box-sizing: border-box;
 }
+:root{
 
+    --primary:#000000;
+    --semi-header:#000000;
+    --header:#000000;
+
+}
 body{
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,12 +19,17 @@ body{
     height: 100vh;
     max-height: 100vh;
     font-family: 'Song Myung', serif;
+    color:var(--primary)
 }
 
 
 .title__container{
     font-size:2.5rem;
     text-align: center;
+}
+
+.title__container span{
+    color:var(--header)
 }
 
 .main__container{
@@ -38,7 +48,7 @@ body{
     border-radius: 5px;
     padding-right:20px;
     width:350px;
-    min-height: 50vh;
+    min-height: 45vh;
     margin:10px;
 }
 
@@ -47,6 +57,7 @@ body{
     top:15px;
     font-size:1.7rem;
     border:none;
+    color:var(--semi-headerheader);
 
 }
 
@@ -65,15 +76,13 @@ body{
 
 .selected__list .selected__fee{
     position: absolute;
-    bottom:0px;
+    bottom:-10px;
     right:5px;
     text-align: right;
-    font-size:1.5rem;
+    font-size:1.4rem;
 }
 
-.selected__fee .origin__fee{
-    color:gray;
-}
+
 
 .selected__fee .discount__fee{
     color:red;
@@ -93,7 +102,8 @@ body{
 }
 
 .single__movie .movie__info{
-    text-align: center;
+    text-align: right;
+    padding-right:15px;
     margin-bottom: 10px;
 }
 
@@ -137,22 +147,13 @@ body{
 .calendar__container{
     margin:20px;
     font-size:18px;
+    text-align: right;
 }
 
 .calendar__container .month{
     font-size:21px;
 }
 
-
-.reservation__container{
-    width:50vw;
-    max-height:10vh;
-    display: block;
-}
-
-.reservation__container.hidden{
-    display: none;
-}
 
 .screening__date{
     color:#ff6666;
@@ -169,6 +170,11 @@ body{
 
 .day__week:hover {
     background-color: #e0e0d1;
+}
+
+.day__week.show {
+    color:#669900;
+    font-weight: bold;
 }
 
 .alert__container{
@@ -194,7 +200,50 @@ body{
 
 
 @media (max-width:631px){
-    .main__container{
-        flex-direction: column-reverse;
+
+    body{
+        max-height:70vh;
     }
+    .main__container{
+        flex-direction: column;
+        margin:0;
+    }
+
+    .title__container{
+        position: absolute;
+        top:2%;
+    }
+
+    .calendar__container{
+        order: 2;
+    }
+
+    .screening__list{
+        order: 3;
+        height:45vh;
+    }
+
+
+
+    .selected__list{
+        order: 4;
+        min-height: 30vh;
+    }
+
+    
+    .selected__list .selected__movies{
+        max-height: 20%;
+    }
+
+    .alert__container{
+        font-size:15px;
+    }
+
+    .selected__fee{
+        font-size: 1rem;
+    }
+    .selected__fee .discount__fee{
+        border-bottom:none;
+    }
+    
 }
