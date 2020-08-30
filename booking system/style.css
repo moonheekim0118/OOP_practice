@@ -2,13 +2,23 @@
 *{
     box-sizing: border-box;
 }
+
 :root{
 
     --primary:#000000;
-    --semi-header:#000000;
     --header:#000000;
+    --background:#fff;
+    --buttons:#000000; 
 
 }
+
+html[data-theme='dark']{
+    --primary:#ccc;
+    --header:#9933ff;
+    --background:#1a1a1a;
+
+}
+
 body{
     display: flex;
     flex-direction: column;
@@ -19,8 +29,84 @@ body{
     height: 100vh;
     max-height: 100vh;
     font-family: 'Song Myung', serif;
-    color:var(--primary)
+    color:var(--primary);
+    background-color: var(--background);
 }
+
+nav{
+    height:34px;
+    width:60px;
+    position: absolute;
+    top:5%;
+    right:5%;
+}
+
+.theme-switch__container .theme-switch{
+    display: inline-block;
+    height:34px;
+    width:70px;
+    position: relative;
+}
+
+.theme-switch__container input{
+    display: none;
+    height:34px;
+    width:60px;
+    position: relative;
+}
+
+.slider{
+    background-color: #ccc;
+    bottom:0;
+    position: absolute;
+    cursor:pointer;
+    left:0;
+    right:0;
+    top:0;
+    transition: .4s;
+    border-radius: 20px;
+    padding:5px;
+
+}
+
+.slider::before{
+    background-color: #fff;
+    bottom:4px;
+    content:"";
+    height:26px;
+    left:5px;
+    position: absolute;
+    transition:.4s;
+    width:26px;
+    border-radius: 50%;
+}
+
+.slider::after{
+    top:3px;
+    content:"🌞";
+    font-size:20px;
+    height:26px;
+    right:5px;
+    position: absolute;
+    width:26px;
+    transition:.4s;
+}
+
+
+
+#checkbox:checked + .slider{
+    background-color: #669900;
+}
+
+#checkbox:checked  + .slider:before{
+    transform: translateX(35px);
+}
+
+#checkbox:checked  + .slider:after{
+    content: '🌝';
+    transform: translateX(-33px);
+}
+
 
 
 .title__container{
@@ -57,7 +143,7 @@ body{
     top:15px;
     font-size:1.7rem;
     border:none;
-    color:var(--semi-headerheader);
+    color:var(--header);
 
 }
 
@@ -170,6 +256,7 @@ body{
 
 .day__week:hover {
     background-color: #e0e0d1;
+    color: var(--buttons);
 }
 
 .day__week.show {
@@ -178,6 +265,7 @@ body{
 }
 
 .alert__container{
+    color:var(--buttons);
     position: fixed;
     bottom:0;
     padding:20px;

@@ -5,15 +5,14 @@ const $weekly=document.getElementById('weekly__calendar');
 
 const getWeek= function(params){
     const month=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월', '11월', '12월'];
-    const day = ['월','화','수','목','금','토','일'];
+    const day = ['일','월','화','수','목','금','토'];
     const daysInMonth=getDaysInMonth(params.month, params.year);
     function getDaysInMonth(month,year){ // 현재 month의 총 일자 구하기 
         return new Date(year, month+1,0).getDate();
     }
     let html='';
     let newMonth = month[params.month]; // 월 
-    let dayCount = params.day-2; // 요일 
-
+    let dayCount = params.day-1 // 요일 
     for(let i=0; i<7; i++){ //일주일단위
         dayCount++;
         if(dayCount === 7) {

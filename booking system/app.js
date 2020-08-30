@@ -8,6 +8,7 @@ const $originFee=document.getElementById('origin__fee');
 const $discountFee=document.getElementById('discount__fee');
 const $totalFee=document.getElementById('total__fee');
 const $alertContainer=document.getElementById('alert__container');
+const $darkModeSwitch=document.querySelector('.theme-switch input[type="checkbox"]');
 let $screenMovie;
 let $removeBtns;
 
@@ -411,6 +412,27 @@ class UI{
         })
         btn.classList.add('show');
     }
+
+    initTheme(){
+        const currentTheme=localStorage.getItem('theme');
+        if(currentTheme){
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            if(currentTheme === 'dark'){
+                $darkModeSwitch.checked=true;
+            }
+        }
+    }
+
+    changeTheme(e){
+        if(e.target.checked){
+            document.documentElement.setAttribute('data-theme','dark');
+            localStorage.setItem('theme','dark');
+        }
+        else{
+            document.documentElement.setAttribute('data-theme','light');
+            localStorage.setItem('theme','light');
+        }
+    }
 }
 
 
@@ -426,7 +448,6 @@ const policy3= new PercentageDiscount(morningDiscount, 20); // 조조할인 + �
 const policy4 = new PercentageDiscount(nightDiscount, 10); // 심야할인 + 퍼센테이지 할인
 
 
-// 상영 스케줄 로컬 스토리지에 저장   
 // 점심에는 기본적으로 할인정책 들어가지만, 적용되지는 않음
 const initScreening=function(){ 
     // 영화 리스트 
@@ -524,6 +545,9 @@ function reservationRemoveEvent(){
 }
 init();
 
+ui.initTheme();
 dateEvent();
 
 initScreening();
+
+$darkModeSwitch.addEventListener('change',ui.changeTheme,false);
