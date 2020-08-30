@@ -12,8 +12,8 @@ const $darkModeSwitch=document.querySelector('.theme-switch input[type="checkbox
 let $screenMovie;
 let $removeBtns;
 
-let reservedList=[];
-const screeningList=
+let reservedList=[]; // 예약 장바구니 
+const screeningList= // 상영 리스트 (일주일)
 [
     [],
     [],
@@ -24,7 +24,7 @@ const screeningList=
     []
 ]
 
-function timestamp(startTime, endTime)
+function timestamp(startTime, endTime) 
 {
    
    const start= startTime.split('.');
@@ -62,6 +62,7 @@ function timestamp(startTime, endTime)
 
    return `${startHour}:${startMin} ~ ${endHour}:${endMin}`;
 }
+
 class Movie {
     constructor(title, sequence, fee){
         this.title=title;
@@ -434,23 +435,23 @@ class UI{
         }
     }
 }
-
-
-// 조조 할인
-const morningDiscount = new DiscountRequirement(7,12);
-// 심야 할인 
-const nightDiscount = new DiscountRequirement(22,24);
-
-// 할인 정책 
-const policy1=  new StaticDiscount(morningDiscount,3000); // 조조할인 + 고정가격할인
-const policy2= new StaticDiscount(nightDiscount,2000); // 심야할인 + 고정가격 할인
-const policy3= new PercentageDiscount(morningDiscount, 20); // 조조할인 + 퍼센테이지 할인
-const policy4 = new PercentageDiscount(nightDiscount, 10); // 심야할인 + 퍼센테이지 할인
+const ui = new UI();
 
 
 // 점심에는 기본적으로 할인정책 들어가지만, 적용되지는 않음
 const initScreening=function(){ 
     // 영화 리스트 
+    // 조조 할인
+    const morningDiscount = new DiscountRequirement(7,12);
+    // 심야 할인 
+    const nightDiscount = new DiscountRequirement(22,24);
+
+    // 할인 정책 
+    const policy1=  new StaticDiscount(morningDiscount,3000); // 조조할인 + 고정가격할인
+    const policy2= new StaticDiscount(nightDiscount,2000); // 심야할인 + 고정가격 할인
+    const policy3= new PercentageDiscount(morningDiscount, 20); // 조조할인 + 퍼센테이지 할인
+    const policy4 = new PercentageDiscount(nightDiscount, 10); // 심야할인 + 퍼센테이지 할인
+
     const movie1 = new Movie('작은 아씨들', '2', '12000');
     const movie2 = new Movie('브루클린', '1.30','12000');
     const movie3 = new Movie('다크나이트', '3', '11000');
@@ -472,25 +473,23 @@ const initScreening=function(){
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],8,policy3));
 
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],12,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],12,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],12,policy2));
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],13,policy1));
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],15,policy3));
 
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],17,policy1));
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],18,policy1));
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],20,policy3));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],21,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],21,policy2));
 
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],21.35,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],22,policy1));
-        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],23,policy1));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],22,policy2));
+        screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],23,policy4));
         screeningList[i].push(new Screening(newDate,movieList[Math.floor(Math.random() * arrLen) ],24,policy3));
     }
 
 }
 
-
-const ui = new UI();
 const init=function(){
     ui.initSelectedContainer();
 }
@@ -544,10 +543,8 @@ function reservationRemoveEvent(){
     })
 }
 init();
-
 ui.initTheme();
 dateEvent();
-
 initScreening();
 
 $darkModeSwitch.addEventListener('change',ui.changeTheme,false);

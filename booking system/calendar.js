@@ -1,8 +1,6 @@
 // 오늘부터 일주일 구현하기 
 const $weekly=document.getElementById('weekly__calendar');
 
-
-
 const getWeek= function(params){
     const month=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월', '11월', '12월'];
     const day = ['일','월','화','수','목','금','토'];
