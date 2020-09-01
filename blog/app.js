@@ -9,7 +9,7 @@ window.onload=function(){
     const $postId=document.getElementById('post__id');
     const $filter= document.getElementById('filter');
     const $closeBtn= document.getElementById('close__btn');
-    let $editBtns =document.querySelectorAll('.edit');
+    const $updateForm= document.getElementById('update__form');
     const limit = 5;
     let page=1;
 
@@ -116,8 +116,6 @@ window.onload=function(){
                 } 
             }
         })
-        $editBtns =document.querySelectorAll('.edit');//edit 버튼 추가되었으므로 갱신하여 이벤트리스너 등록 
-        editEventListeners();
     }
 
     // modal 띄우기 
@@ -130,7 +128,6 @@ window.onload=function(){
         $updatedContents.value=body;
         $postId.value=postId;
         $modalContainer.classList.add('show');
-        formUpdateEventListener(document.getElementById('update__form'));
     }
 
     // modal 닫기 
@@ -152,25 +149,10 @@ window.onload=function(){
    async function getPosts(){
         const posts = await api__.get();
         UI__.drawPost(posts);
-        $editBtns =document.querySelectorAll('.edit');//edit 버튼 추가되었으므로 갱신하여 이벤트리스너 등록 
-        editEventListeners();
     }
 
-    function editEventListeners(){
-        if($editBtns.length > 0){
-            $editBtns.forEach(btn=>{
-                btn.addEventListener('click',UI__.showModal);
-            })
-        }
-    }
-
-    function loadPost(){
-        setTimeout(()=>{
-            page++;
-            getPosts();
-        }, 300);
-    }
-     function formUpdateEventListener($updateForm){
+    const eventListeners = function(){
+        $posts.addEventListener('click',UI__.showModal);
         
         $updateForm.addEventListener('submit',async(e)=>{
             e.preventDefault();
@@ -179,23 +161,31 @@ window.onload=function(){
             UI__.closeModal(); // 모달 닫기 
             UI__.showAlert('Updated Successfully😀');
         });
+        
+        window.addEventListener('scroll',()=>{
+            const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+            
+            if(scrollTop+clientHeight >= scrollHeight-5){
+                UI__.loading();
+            }
+        })
+
+        $filter.addEventListener('input',(e)=>{
+            const keyWord = e.target.value.toUpperCase();
+            UI__.filterPost(keyWord);
+        });
+    
+        $closeBtn.addEventListener('click',UI__.closeModal);
+    
+    }
+
+    function loadPost(){
+        setTimeout(()=>{
+            page++;
+            getPosts();
+        }, 300);
     }
 
     getPosts(); //init 
-    window.addEventListener('scroll',()=>{
-        const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-        
-        if(scrollTop+clientHeight >= scrollHeight-5){
-            UI__.loading();
-        }
-    })
-
-    $filter.addEventListener('input',(e)=>{
-        const keyWord = e.target.value.toUpperCase();
-        UI__.filterPost(keyWord);
-    });
-
-    $closeBtn.addEventListener('click',UI__.closeModal);
-
-console.log($editBtns);
+    eventListeners();
 }
