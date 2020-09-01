@@ -2,7 +2,6 @@
 
 window.onload=function(){
         // movie constructor
-    let removeBtn=document.querySelectorAll('#remove');
     let movieDetail=document.querySelectorAll('.movie');
     const modalContainer = document.getElementById('modal__container');
     const modal__title = document.getElementById('movie__title');
@@ -11,6 +10,7 @@ window.onload=function(){
     const modal__comment = document.getElementById('movie__comment');
     const modal__close = document.getElementById('close');
     const form = document.getElementById('form');
+    const table = document.getElementById('movie__container');
 
 
     // store : 로컬 스토리지에 저장 및 불러내기
@@ -55,7 +55,6 @@ window.onload=function(){
 
     UI.prototype.fetch=function(){ // localStorage로부터 불러들여서 테이블에 쓰기
         const movieList= store__.get()||[];
-        const table = document.getElementById('movie__container');
         if(movieList.length >0){
             movieList.forEach(movie=>{
                 let tr = document.createElement('tr');
@@ -71,7 +70,7 @@ window.onload=function(){
             })
         }
         movieDetail=document.querySelectorAll('.movie');
-        removeBtn=document.querySelectorAll('#remove'); //fetch 후 remove btn 갱신 
+
         initalCheck(movieList.length);
     
     }
@@ -89,8 +88,7 @@ window.onload=function(){
         `;
         table.appendChild(tr);
         movieDetail=document.querySelectorAll('.movie');
-        removeBtn=document.querySelectorAll('#remove'); //add 후 remove btn 갱신
-        console.log(removeBtn);
+
     }
 
     UI.prototype.remove = function(target){ 
@@ -107,7 +105,6 @@ window.onload=function(){
         })
         store__.set(updateMovieList);
         movieDetail=document.querySelectorAll('.movie');
-        removeBtn=document.querySelectorAll('#remove');
         initalCheck(updateMovieList.length);
         target.parentNode.innerHTML='';
     }
@@ -176,31 +173,22 @@ window.onload=function(){
     }
     UI__.fetch(); // 이전 local Storage로부터 데이터 가져와서 화면에 뿌리기 
 
-    const removeEvents = function(){ // remove 버튼 events 
-        if(removeBtn.length >0){
-            removeBtn.forEach(btn=>{
-                btn.addEventListener('click',(e)=>{
-                    UI__.remove(e.target);
-                })
-             })
-         }
-    }
 
-    const modalEvents = function(){
-        if(movieDetail.length > 0){
-            movieDetail.forEach(movie=>{
-                movie.addEventListener('click',(e)=>{
-                    UI__.modal(e.target);
-                })
-            })
+
+    table.addEventListener('click',(e)=>{ // 이벤트 위임
+        // 기존의 새로 생성되는 모든 movie마다 붙였던 modal event와 removeEvent를 Table event로 합침
+        // 여기서 target id가 remove일시, remove 해주고, 아니면 모달 띄워주기 
+        if(e.target.id==='remove'){
+            UI__.remove(e.target);
         }
-    }
+        else{
+            UI__.modal(e.target);
+        }
+    })
 
     modal__close.addEventListener('click',()=>{
         modalContainer.classList.remove('show');
     })
-    removeEvents();
-    modalEvents();
 
     form.addEventListener('submit',(e)=>{
         e.preventDefault();
@@ -225,10 +213,7 @@ window.onload=function(){
             movie__.add();
             UI__.add(movie__);
             UI__.clearFields();
-            removeEvents();
-            modalEvents();
             UI__.showAlert('영화가 추가되었습니다');
         }
     })
-
 }
