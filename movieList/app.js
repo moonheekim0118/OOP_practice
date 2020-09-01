@@ -2,7 +2,6 @@
 
 window.onload=function(){
         // movie constructor
-    let movieDetail=document.querySelectorAll('.movie');
     const modalContainer = document.getElementById('modal__container');
     const modal__title = document.getElementById('movie__title');
     const modal__year = document.getElementById('movie__year');
