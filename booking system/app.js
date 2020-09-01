@@ -1,4 +1,5 @@
-
+window.onload=function(){
+    
 const $selectedContainer= document.getElementById('selected__list');
 const $selectedInnerContainer=document.getElementById('selected__movies');
 const $screenContainer = document.getElementById('screening');
@@ -336,8 +337,6 @@ class UI{
            `;
        })
        $screenContainer.innerHTML=html;
-       $screenMovie=document.querySelectorAll('.screening__movies');
-       movieSelectEvent();
     }
 
     fetchReservationContainer(){
@@ -382,8 +381,6 @@ class UI{
             `
             $selectedInnerContainer.innerHTML+=html;
         }
-        $removeBtns=document.querySelectorAll('#remove');
-        reservationRemoveEvent();
     }
 
     removeReservation(){
@@ -393,8 +390,6 @@ class UI{
         if(reservedList.length ===0){
             this.initSelectedContainer();
         }
-        $removeBtns=document.querySelectorAll('#remove');
-        reservationRemoveEvent();
     }
 
     showAlert(message){
@@ -507,44 +502,44 @@ const dateEvent=function(){
     })
 }
 
-function movieSelectEvent(){
-    $screenMovie.forEach(movie=>{
-        movie.addEventListener('click',()=>{
-            const index = movie.children[3].innerText.split(','); // hidden으로 숨겨온 인덱스 가져와서 인스턴스에 접근하기
-            const firstIndex = +index[0];
-            const secondIndex= +index[1];
-            const date =+index[2];
-            const screening=screeningList[firstIndex][secondIndex];
-            const reservation = new Reservation(screening,screening.CalcMoney());
-            const newItem=
-            {
-                reservation:reservation,
-                date:date,
-                qty:1,
-                originMoney:+reservation.getMoney().getTotal(),
-                discountMoney:+reservation.getMoney().getDiscount()
-            }
-            ui.addReservation(newItem);
-            ui.updateFee();
-            ui.showAlert('예매가 완료되었습니다.');
-        })
+
+const movieSelectEvent= function(){// 이벤트 위임 사용하여 변경
+    $screenContainer.addEventListener('click',(e)=>{
+        const index =e.target.parentNode.children[3].innerText.split(',');
+        const firstIndex = +index[0];
+        const secondIndex= +index[1];
+        const date =+index[2];
+        const screening=screeningList[firstIndex][secondIndex];
+        const reservation = new Reservation(screening,screening.CalcMoney());
+        const newItem=
+        {
+            reservation:reservation,
+            date:date,
+            qty:1,
+            originMoney:+reservation.getMoney().getTotal(),
+            discountMoney:+reservation.getMoney().getDiscount()
+        }
+        ui.addReservation(newItem);
+        ui.updateFee();
+        ui.showAlert('예매가 완료되었습니다.');
     })
 }
 
-function reservationRemoveEvent(){
-    $removeBtns.forEach(btn=>{
-        btn.addEventListener('click',()=>{
-            const target = +btn.parentNode.children[2].innerText; 
-            // hidden 값으로 넘겨받은 해당 객체 index 
-            store.filter(target);
-            ui.removeReservation();
-            ui.showAlert('예매가 취소되었습니다.');
-        })
+
+const reservationRemoveEvent=function(){ // 이벤트 위임 사용하여 변경
+    $selectedInnerContainer.addEventListener('click',(e)=>{
+       const target =e.target.parentNode.children[2].innerText;
+       store.filter(+target);
+       ui.removeReservation();
+       ui.showAlert('예매가 취소되었습니다.')
     })
 }
 init();
 ui.initTheme();
 dateEvent();
 initScreening();
+reservationRemoveEvent();
+movieSelectEvent();
 
 $darkModeSwitch.addEventListener('change',ui.changeTheme,false);
+}
